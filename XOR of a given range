@@ -1,0 +1,59 @@
+/* Given a binary matrix, Your task is to complete the function maxArea which the maximum size rectangle area in a binary-sub-matrix 
+with all 1’s. The function takes 3 arguments the first argument is the Matrix M[ ] [ ] and the next two are two  integers n and m which 
+denotes the size of the matrix M. Your function should return an integer denoting the area of the maximum rectangle */
+
+
+#include<bits/stdc++.h>
+using namespace std;  
+int gtXor(int arr[], int n,int a,int b);
+int main()
+{
+	int t;
+	cin>>t;
+	while(t--){
+		int n,a,b;
+		cin>>n>>a>>b;
+		int arr[n];
+		for(int i=0;i<n;i++)
+			cin>>arr[i];
+		int m=min(a,b);
+		int l=max(a,b);
+		cout<<gtXor(arr,n,m,l)<<endl;
+	}
+    return 0;
+}
+int range_XOR(int tree[],int s,int e,int a,int b,int si)
+{
+    if(s>=a&&e<=b)
+    {
+        return tree[si];
+    }
+    if(e<a||s>b)
+    {
+        return 0;
+    }
+    int mid=s+(-s+e)/2;
+    return range_XOR(tree,s,mid,a,b,2*si+1)^range_XOR(tree,mid+1,e,a,b,2*si+2);
+}
+int contructTree(int arr[],int tree[],int s,int e,int si)
+{
+    if(s==e)
+    {
+        tree[si]=arr[s];
+        return arr[s];
+    }
+    int mid=s+(-s+e)/2;
+    tree[si]=contructTree(arr,tree,s,mid,2*si+1)^contructTree(arr,tree,mid+1,e,2*si+2);
+    return tree[si];
+}
+int  contruct_Tree(int arr[],int tree[],int n,int si)
+{
+     contructTree(arr,tree,0,n-1,0);
+}
+int gtXor(int arr[], int n,int a,int b)
+{
+    int tree[1000000];
+    memset(tree,0,sizeof(tree));
+    contruct_Tree(arr,tree,n,0);
+    return range_XOR(tree,0,n-1,a,b,0);
+}

@@ -1,0 +1,74 @@
+/* Given an array A[ ] and its size N your task is to complete two functions  a constructST  function which builds the segment tree  and
+a function RMQ which finds range minimum query in a segment tree */
+
+#include<bits/stdc++.h>
+using namespace std;
+int *constructST(int arr[],int n);
+int RMQ(int st[] , int n, int a, int b);
+int main()
+{
+    int T;
+    cin>>T;
+    while(T--)
+    {
+        int N;
+        cin>>N;
+        int A[N];
+        for(int i=0;i<N;i++)
+            cin>>A[i];
+        int Q;
+        cin>>Q;
+        int *segTree = constructST(A,N);
+        for(int i=0;i<Q;i++)
+        {
+            int start,e;
+            
+            cin>>start>>e;
+            if(start>e)
+            {
+                swap(start,e);
+            }
+            cout<<RMQ(segTree,N,start,e)<<" ";
+        }
+        cout<<endl;
+    }
+}
+int constructTree(int arr[],int s,int e,int tree[],int si)
+{
+    if(s==e)
+    {
+        tree[si]=arr[s];
+        return arr[s];
+    }
+    int mid=s+(-s+e)/2;
+    constructTree(arr,s,mid,tree,2*si+1);
+    constructTree(arr,mid+1,e,tree,2*si+2);
+   return  tree[si]=min(tree[2*si+1],tree[2*si+2]);
+}
+int *constructST(int arr[],int n)
+{
+    int tree[100001];
+    constructTree(arr,0,n-1,tree,0);
+    int *stt=tree;
+    return stt;
+}
+/* The functions returns the
+ min element in the range
+ from a and b */
+ int find_min(int st[],int n,int s,int e,int a,int b,int si)
+ {
+     if(s>b||e<a)
+     {
+         return INT_MAX;
+     }
+     if(s>=a&&e<=b)
+     {
+         return st[si];
+     }
+     int mid=s+(-s+e)/2;
+     return min(find_min(st,n,s,mid,a,b,2*si+1),find_min(st,n,mid+1,e,a,b,2*si+2));
+ }
+int RMQ(int st[] , int n, int a, int b)
+{
+     return find_min(st,n,0,n-1,a,b,0);
+}
